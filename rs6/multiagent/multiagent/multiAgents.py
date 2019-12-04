@@ -71,7 +71,7 @@ class ReflexAgent(Agent):
         newPos = successorGameState.getPacmanPosition()
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
-        newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+        newScaredTimes = [ghostState.scaredTimer for ghostStategetNumAgents in newGhostStates]
 
         "*** YOUR CODE HERE ***"
         import sys
@@ -263,13 +263,72 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
     def getAction(self, gameState):
         """
-          Returns the expectimax action using self.depth and self.evaluationFunction
-
+        Returns the expectimax action using self.depth and self.evaluationFunction
           All ghosts should be modeled as choosing uniformly at random from their
           legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        import sys
+        def result(gameState, agent, action):
+            return gameState.generateSuccessor(agent, action)
+
+        def utility(gameState):
+            return self.evaluationFunction(gameState)
+
+        def terminalTest(gameState, depth):
+            return depth == 0 or gameState.isWin() or gameState.isLose()
+
+        def max_value(gameState, agent, depth):
+            if terminalTest(gameState, depth): return utility(gameState)
+            v = -sys.maxint
+            for a in gameState.getLegalActions(agent):
+                v = max(v,min_value(result(gameState,agent,a),1,depth))
+            return v
+
+        def min_value(gameState, agent, depth):
+            if terminalTest(gameState, depth): return utility(gameState)
+            v = sys.maxint
+            values = []
+            for a in gameState.getLegalActions(agent):
+                if (agent == gameState.getNumAgents()-1):
+                    values.append(min(v, max_value(result(gameState,agent,a), 0, depth-1)))
+                else:
+                    values.append(min(v, min_value(result(gameState,agent,a), agent+1, depth)))
+            return float(sum(values)) / float(len(gameState.getLegalActions(agent)))
+
+        v = -sys.maxint
+        actions = []
+        for a in gameState.getLegalActions(0):
+            u = min_value(result(gameState, 0, a), 1, self.depth)
+            if u == v: actions.append(a)
+            elif u>=v: v = u; actions = [a]
+
+
+        return random.choice(actions)
+        # def expectimax(agent, depth, gameState):
+        #     if gameState.isLose() or gameState.isWin() or depth == self.depth:  # return the utility in case the defined depth is reached or the game is won/lost.
+        #         return self.evaluationFunction(gameState)
+        #     if agent == 0:  # maximizing for pacman
+        #         return max(expectimax(1, depth, gameState.generateSuccessor(agent, newState)) for newState in gameState.getLegalActions(agent))
+        #     else:  # performing expectimax action for ghosts/chance nodes.
+        #         nextAgent = agent + 1  # calculate the next agent and increase depth accordingly.
+        #         if gameState.getNumAgents() == nextAgent:
+        #             nextAgent = 0
+        #         if nextAgent == 0:
+        #             depth += 1
+        #         return sum(expectimax(nextAgent, depth, gameState.generateSuccessor(agent, newState)) for newState in gameState.getLegalActions(agent)) / float(len(gameState.getLegalActions(agent)))
+        #
+        # """Performing maximizing task for the root node i.e. pacman"""
+        # maximum = float("-inf")
+        # action = Directions.WEST
+        # for agentState in gameState.getLegalActions(0):
+        #     utility = expectimax(1, 0, gameState.generateSuccessor(0, agentState))
+        #     if utility > maximum or maximum == -sys.maxint:
+        #         maximum = utility
+        #         action = agentState
+
+        return action
+
 
 def betterEvaluationFunction(currentGameState):
     """
@@ -277,6 +336,8 @@ def betterEvaluationFunction(currentGameState):
       evaluation function (question 5).
 
       DESCRIPTION: <write something here so we know what you did>
+      come up with linear combination final score and a compost function for the score and how good is it.
+      return c1 * score + c2 * score (c1 tendria que ser mayor)
     """
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()

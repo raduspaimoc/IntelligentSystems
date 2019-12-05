@@ -304,30 +304,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             elif u>=v: v = u; actions = [a]
 
 
-        return random.choice(actions)
-        # def expectimax(agent, depth, gameState):
-        #     if gameState.isLose() or gameState.isWin() or depth == self.depth:  # return the utility in case the defined depth is reached or the game is won/lost.
-        #         return self.evaluationFunction(gameState)
-        #     if agent == 0:  # maximizing for pacman
-        #         return max(expectimax(1, depth, gameState.generateSuccessor(agent, newState)) for newState in gameState.getLegalActions(agent))
-        #     else:  # performing expectimax action for ghosts/chance nodes.
-        #         nextAgent = agent + 1  # calculate the next agent and increase depth accordingly.
-        #         if gameState.getNumAgents() == nextAgent:
-        #             nextAgent = 0
-        #         if nextAgent == 0:
-        #             depth += 1
-        #         return sum(expectimax(nextAgent, depth, gameState.generateSuccessor(agent, newState)) for newState in gameState.getLegalActions(agent)) / float(len(gameState.getLegalActions(agent)))
-        #
-        # """Performing maximizing task for the root node i.e. pacman"""
-        # maximum = float("-inf")
-        # action = Directions.WEST
-        # for agentState in gameState.getLegalActions(0):
-        #     utility = expectimax(1, 0, gameState.generateSuccessor(0, agentState))
-        #     if utility > maximum or maximum == -sys.maxint:
-        #         maximum = utility
-        #         action = agentState
-
-        return action
+        return random.choice(actions)                
 
 
 def betterEvaluationFunction(currentGameState):

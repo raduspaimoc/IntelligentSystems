@@ -304,20 +304,48 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             elif u>=v: v = u; actions = [a]
 
 
-        return random.choice(actions)                
+        return random.choice(actions)
 
 
 def betterEvaluationFunction(currentGameState):
-    """
-      Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
-      evaluation function (question 5).
+    newPos = currentGameState.getPacmanPosition()
+    newFood = currentGameState.getFood()
+    newGhostStates = currentGameState.getGhostStates()
+    newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+    capsules = currentGameState.getCapsules()
 
-      DESCRIPTION: <write something here so we know what you did>
-      come up with linear combination final score and a compost function for the score and how good is it.
-      return c1 * score + c2 * score (c1 tendria que ser mayor)
-    """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    import sys
+    old_food = currentGameState.getFood()
 
-# Abbreviation
+    total_score = currentGameState.getScore()
+    for x in xrange(old_food.width):
+        for y in xrange(old_food.height):
+            if(old_food[x][y]):
+                d = manhattanDistance((x,y),newPos)
+                if (d==0):
+                    total_score +=100
+                else:
+                    total_score += 1.0/(d*d)
+
+    #total_score = currentGameState.getScore()
+    for ghost in newGhostStates:
+        d=manhattanDistance(ghost.getPosition(), newPos)
+        if (d<=1):
+            if(ghost.scaredTimer!=0):
+                total_score += 2000
+            else:
+                total_score -=200
+
+    for capsule in capsules:
+        d=manhattanDistance(capsule, newPos)
+        if (d<=1):
+            total_score += 200
+        else:
+            total_score += 2.0/(d*d)
+    # for capsule in currentGameState.getCapsules()
+
+    return total_score
+
+# Abbreviation Average Score: -1836.9
 better = betterEvaluationFunction
